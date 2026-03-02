@@ -1,39 +1,22 @@
 import { Todo } from '../types/Todo';
 import { client } from '../utils/fetchClient';
 
-// Registered User ID
-export const USER_ID = 4012;
+export const USER_ID = 2962;
 
-/**
- * Fetches the user's todos from the API
- */
 export const getTodos = () => {
   return client.get<Todo[]>(`/todos?userId=${USER_ID}`);
 };
 
-// Add more methods
+// Add more methods here
 
-/**
- * Creates a new todo on the API
- */
-export const addTodo = (title: string) => {
-  return client.post<Todo>('/todos', {
-    title,
-    userId: USER_ID,
-    completed: false,
-  });
+export const addTodo = (data: Omit<Todo, 'id'>) => {
+  return client.post<Todo>(`/todos`, data);
 };
 
-/**
- * Deletes a todo from the API by its id
- */
-export const deleteTodo = (id: number) => {
-  return client.delete(`/todos/${id}`);
+export const deleteTodo = (todoId: number) => {
+  return client.delete(`/todos/${todoId}`);
 };
 
-/**
- * Updates a todo on the API (used for toggle and rename)
- */
-export const updateTodo = (id: number, data: Partial<Todo>) => {
+export const updateTodo = ({ id, ...data }: Partial<Todo> & { id: number }) => {
   return client.patch<Todo>(`/todos/${id}`, data);
 };
