@@ -1,48 +1,49 @@
-import cn from 'classnames';
-import { Todo } from '../types/Todo';
+/* eslint-disable jsx-a11y/label-has-associated-control */
+/* eslint-disable jsx-a11y/control-has-associated-label */
+import React from 'react';
 
-interface HeaderProps {
-  todos: Todo[];
-  isAllCompleted: boolean;
-  onToggleAll: () => void;
+type Props = {
+  allCompleted: boolean;
+  newTitle: string;
+  isAdding: boolean;
+  inputRef: React.RefObject<HTMLInputElement>;
+  onNewTitleChange: (value: string) => void;
   onSubmit: (event: React.FormEvent) => void;
-  query: string;
-  onQueryChange: (str: string) => void;
-  isSubmitting: boolean;
-  todoFieldRef: React.RefObject<HTMLInputElement>;
-}
+  hasTodos: boolean;
+  onToggleAll: () => void;
+};
 
-export const Header: React.FC<HeaderProps> = ({
-  todos,
-  isAllCompleted,
-  onToggleAll,
+export const Header: React.FC<Props> = ({
+  allCompleted,
+  newTitle,
+  isAdding,
+  inputRef,
+  onNewTitleChange,
   onSubmit,
-  query,
-  onQueryChange,
-  isSubmitting,
-  todoFieldRef,
+  hasTodos,
+  onToggleAll,
 }) => {
   return (
     <header className="todoapp__header">
-      {todos.length > 0 && (
+      {hasTodos && (
         <button
           type="button"
-          className={cn('todoapp__toggle-all', { active: isAllCompleted })}
+          className={`todoapp__toggle-all ${allCompleted ? 'active' : ''}`}
           data-cy="ToggleAllButton"
-          onClick={() => onToggleAll()}
+          onClick={onToggleAll}
         />
       )}
 
-      <form onSubmit={event => onSubmit(event)}>
+      <form onSubmit={onSubmit}>
         <input
+          ref={inputRef}
+          value={newTitle}
           data-cy="NewTodoField"
           type="text"
           className="todoapp__new-todo"
           placeholder="What needs to be done?"
-          value={query}
-          onChange={event => onQueryChange(event.target.value)}
-          disabled={isSubmitting}
-          ref={todoFieldRef}
+          disabled={isAdding}
+          onChange={event => onNewTitleChange(event.target.value)}
         />
       </form>
     </header>

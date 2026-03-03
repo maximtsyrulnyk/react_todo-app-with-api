@@ -1,41 +1,63 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import React from 'react';
 import { Todo } from '../types/Todo';
 import { TodoItem } from './TodoItem';
 
-interface TodoListProps {
-  filteredTodos: Todo[];
+type Props = {
+  todos: Todo[];
+  loadingTodoIds: number[];
   tempTodo: Todo | null;
   onDelete: (id: number) => void;
-  loadingIds: number[];
-  onUpdate: (todo: Todo, data: Partial<Todo>) => Promise<void>;
-}
+  onToggle: (todo: Todo) => void;
+  onRename: (todo: Todo, title: string) => void;
+};
 
-export const TodoList: React.FC<TodoListProps> = ({
-  filteredTodos,
+export const TodoList: React.FC<Props> = ({
+  todos,
+  loadingTodoIds,
   tempTodo,
   onDelete,
-  loadingIds,
-  onUpdate,
+  onToggle,
+  onRename,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
-      {filteredTodos.map(todo => (
+      {todos.map(todo => (
         <TodoItem
-          todo={todo}
           key={todo.id}
-          isLoading={loadingIds.includes(todo.id)}
+          todo={todo}
+          isLoading={loadingTodoIds.includes(todo.id)}
           onDelete={onDelete}
-          onUpdate={onUpdate}
+          onToggle={onToggle}
+          onRename={onRename}
         />
       ))}
 
       {tempTodo && (
-        <TodoItem
-          todo={tempTodo}
-          key={tempTodo.id}
-          isLoading={true}
-          onDelete={onDelete}
-          onUpdate={onUpdate}
-        />
+        <div data-cy="Todo" className="todo">
+          <label className="todo__status-label">
+            <input
+              data-cy="TodoStatus"
+              type="checkbox"
+              className="todo__status"
+              checked={false}
+              readOnly
+            />
+          </label>
+
+          <span data-cy="TodoTitle" className="todo__title">
+            {tempTodo.title}
+          </span>
+
+          <button type="button" className="todo__remove" data-cy="TodoDelete">
+            ?
+          </button>
+
+          <div data-cy="TodoLoader" className="modal overlay is-active">
+            <div className="modal-background has-background-white-ter" />
+            <div className="loader" />
+          </div>
+        </div>
       )}
     </section>
   );

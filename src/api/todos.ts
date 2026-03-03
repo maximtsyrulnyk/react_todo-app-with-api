@@ -1,22 +1,23 @@
-import { Todo } from '../types/Todo';
+﻿import { Todo } from '../types/Todo';
 import { client } from '../utils/fetchClient';
 
-export const USER_ID = 2962;
+export const USER_ID = 12345;
+
+type TodoPatch = Partial<Omit<Todo, 'id' | 'userId'>>;
+type NewTodo = Omit<Todo, 'id'>;
 
 export const getTodos = () => {
   return client.get<Todo[]>(`/todos?userId=${USER_ID}`);
 };
 
-// Add more methods here
-
-export const addTodo = (data: Omit<Todo, 'id'>) => {
-  return client.post<Todo>(`/todos`, data);
+export const addTodo = (newTodo: NewTodo) => {
+  return client.post<Todo>('/todos', newTodo);
 };
 
-export const deleteTodo = (todoId: number) => {
-  return client.delete(`/todos/${todoId}`);
+export const deleteTodo = (id: number) => {
+  return client.delete(`/todos/${id}`);
 };
 
-export const updateTodo = ({ id, ...data }: Partial<Todo> & { id: number }) => {
+export const updateTodo = (id: number, data: TodoPatch) => {
   return client.patch<Todo>(`/todos/${id}`, data);
 };
